@@ -1,7 +1,7 @@
 # MyTwitchHub
 
 <p align="center">
-<img src="https://img.shields.io/badge/Language-%20Java | CSS%20-f9e229.svg">
+<img src="https://img.shields.io/badge/Language-%20Java | JavaScript%20-f9e229.svg">
 <img src="https://img.shields.io/badge/Framework-JavaServlet | node.js%20-0eb984.svg">
 <img src="https://img.shields.io/badge/platform-%20 Web%20-ff69b4.svg">
 </p>
