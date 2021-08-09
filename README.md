@@ -26,18 +26,10 @@
 
 - **RESTful API using Java servlets**.
 - **Retrieve real time data through Twitch API and store in MySQL**
-- **Supports two search method: by top games and by game name**.
+- **Supports two search functionality: by top games and by game name**.
 - **Registered user can save and collect favorite clips/streams/videos**.
 - **Content-based reommendation system**.
 - **Minimal, content-focused, and clutter-free frontEnd design**.
-
-- Blog Cover and blog description.
-- Tag image and tag description.
-- Author cover image, avatar, bio and social links.
-- Multi author support.
-- search functionality.
-- Responsive youtube, vimeo, sou
-
 
 ## Theme General features
 
