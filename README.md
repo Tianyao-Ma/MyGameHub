@@ -26,12 +26,12 @@
 
 - **RESTful API using Java servlets**.
 - **Retrieve real time data through Twitch API and store in MySQL**
-- **Supports two search functionality: by top games and by game name**.
+- **Support two search functionality: by top games and by game name**.
 - **Registered user can save and collect favorite clips/streams/videos**.
 - **Content-based reommendation system**.
 - **Minimal, content-focused, and clutter-free frontEnd design**.
 
-## Theme General features
+##
 
 <p align='center'>
 <img src='https://img.halfrost.com/Prometheus_theme/main_screenshot.png'>
