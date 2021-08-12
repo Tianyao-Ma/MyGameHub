@@ -18,6 +18,15 @@
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
+## 🤖 Tech Stack
+
+* Java
+* Java Servlet
+* SQL
+* React
+* Ant Design 3
+* Amazon Web Services
+
 ## :rocket: Key Features
 
 <p align="justify"> 
