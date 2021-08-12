@@ -22,6 +22,7 @@
 
 * Java
 * Java Servlet
+* Twitch API
 * SQL
 * React
 * Ant Design 3
@@ -41,10 +42,18 @@
 - **Minimal, content-focused, and clutter-free frontEnd design**.
 
 ##
-
 <p align='center'>
 <img src='https://img.halfrost.com/Prometheus_theme/main_screenshot.png'>
 </p>
+
+#### Retrieve real-time data from Twitch using Twitch API
+```
+  ...
+```
+
+#### 
+
+
 
 
 
