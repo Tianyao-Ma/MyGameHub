@@ -41,14 +41,9 @@
 - **Content-based reommendation system**.
 - **Minimal, content-focused, and clutter-free frontEnd design**.
 
-##
-<p align='center'>
-<img src='https://img.halfrost.com/Prometheus_theme/main_screenshot.png'>
-</p>
-
 #### Retrieve real-time data from Twitch using Twitch API
-<p align='center'>
-<img src='http://localhost/GameServlet.pdf'>
+<p align="center">
+<img src="https://user-images.githubusercontent.com/78308927/129792328-769ec8f7-d3d0-4684-8668-9e560df85b52.jpg" width=600>
 </p>
 
  -  [Twitch API](https://dev.twitch.tv/docs/api/) is a RESTFUL API that lets developers build creative integrations for the broader Twitch community 
