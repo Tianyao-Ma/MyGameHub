@@ -47,6 +47,13 @@
 </p>
 
 #### Retrieve real-time data from Twitch using Twitch API
+<p align='center'>
+<img src='http://localhost/GameServlet.pdf'>
+</p>
+
+ -  [Twitch API](https://dev.twitch.tv/docs/api/) is a RESTFUL API that lets developers build creative integrations for the broader Twitch community 
+ -  For all users, myTwitchHub offers top game display and will allow client to search content by game name, which will fetch data by calling two Twitch APIs: [GetTopGames](https://dev.twitch.tv/docs/api/) and [getGames](https://dev.twitch.tv/docs/api/reference#get-games)
+ 
 ```
   ...
 ```
