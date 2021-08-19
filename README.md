@@ -139,10 +139,101 @@ public class TwitchClient {
         return itemMap;
     }
 ```
+#### Store user-related data in SQL
+
+
+
 
 #### user registeration and authentification
 ```
- ...
+ // Verify if the given user Id and password are correct. Returns the user name when it passes
+    public String verifyLogin(String userId, String password) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+        String name = "";
+        String sql = "SELECT first_name, last_name FROM users WHERE id = ? AND password = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                name = rs.getString("first_name") + " " + rs.getString("last_name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to verify user id and password from Database");
+        }
+        return name;
+    }
+    // Add a new user to the database
+    public boolean addUser(User user) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+
+        String sql = "INSERT IGNORE INTO users VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, user.getUserId());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getFirstName());
+            statement.setString(4, user.getLastName());
+
+            return statement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to get user information from Database");
+        }
+    }
+
+```
+LoginServlet
+```
+@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
+public class LoginServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Read user data from the request body
+        ObjectMapper mapper = new ObjectMapper();
+        LoginRequestBody body = mapper.readValue(request.getReader(), LoginRequestBody.class);
+        if (body == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        String username;
+        MySQLConnection connection = null;
+        try {
+            // Verify if the user ID and password are correct
+            connection = new MySQLConnection();
+            String userId = body.getUserId();
+            String password = ServletUtil.encryptPassword(body.getUserId(), body.getPassword());
+            username = connection.verifyLogin(userId, password);
+        } catch (MySQLException e) {
+            throw new ServletException(e);
+        } finally {
+            connection.close();
+        }
+
+        // Create a new session for the user if user ID and password are correct, otherwise return Unauthorized error.
+        if (!username.isEmpty()) {
+            // Create a new session, put user ID as an attribute into the session object, and set the expiration time to 600 seconds.
+            HttpSession session = request.getSession();
+            session.setAttribute("user_id", body.getUserId());
+            session.setMaxInactiveInterval(600);
+
+            LoginResponseBody loginResponseBody = new LoginResponseBody(body.getUserId(), username);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().print(new ObjectMapper().writeValueAsString(loginResponseBody));
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+    }
+}
 ```
 
 #### Searching Algorithms: 
