@@ -141,8 +141,177 @@ public class TwitchClient {
 ```
 #### Store user-related data in SQL
 
+```
+public class MySQLConnection {
+    private final Connection conn;
 
+    // Create a connection to the MySQL database.
+    public MySQLConnection() throws MySQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(MySQLDBUtil.getMySQLAddress());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to connect to Database");
+        }
+    }
 
+    public void close() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Insert a favorite record to the database
+    public void setFavoriteItem(String userId, Item item) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+        // Need to make sure item is added to the database first because the foreign key restriction on item_id(favorite_records) -> id(items)　
+        saveItem(item);
+        // Using ? and preparedStatement to prevent SQL injection
+        String sql = "INSERT IGNORE INTO favorite_records (user_id, item_id) VALUES (?, ?)";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+            statement.setString(2, item.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to save favorite item to Database");
+        }
+    }
+
+    // Remove a favorite record from the database
+    public void unsetFavoriteItem(String userId, String itemId) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+        String sql = "DELETE FROM favorite_records WHERE user_id = ? AND item_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+            statement.setString(2, itemId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to delete favorite item to Database");
+        }
+    }
+
+    // Insert an item to the database.
+    public void saveItem(Item item) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+        String sql = "INSERT IGNORE INTO items VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, item.getId());
+            statement.setString(2, item.getTitle());
+            statement.setString(3, item.getUrl());
+            statement.setString(4, item.getThumbnailUrl());
+            statement.setString(5, item.getBroadcasterName());
+            statement.setString(6, item.getGameId());
+            statement.setString(7, item.getType().toString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to add item to Database");
+        }
+    }
+
+    // Get favorite item ids for the given user
+    public Set<String> getFavoriteItemIds(String userId) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+
+        Set<String> favoriteItems = new HashSet<>();
+        String sql = "SELECT item_id FROM favorite_records WHERE user_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                String itemId = rs.getString("item_id");
+                favoriteItems.add(itemId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to get favorite item ids from Database");
+        }
+
+        return favoriteItems;
+    }
+
+    // Get favorite items for the given user. The returned map includes three entries like {"Video": [item1, item2, item3], "Stream": [item4, item5, item6], "Clip": [item7, item8, ...]}
+    public Map<String, List<Item>> getFavoriteItems(String userId) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+        Map<String, List<Item>> itemMap = new HashMap<>();
+        for (ItemType type : ItemType.values()) {
+            itemMap.put(type.toString(), new ArrayList<>());
+        }
+        Set<String> favoriteItemIds = getFavoriteItemIds(userId);
+        String sql = "SELECT * FROM items WHERE id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            for (String itemId : favoriteItemIds) {
+                statement.setString(1, itemId);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    ItemType itemType = ItemType.valueOf(rs.getString("type"));
+                    Item item = new Item.Builder().id(rs.getString("id")).title(rs.getString("title"))
+                            .url(rs.getString("url")).thumbnailUrl(rs.getString("thumbnail_url"))
+                            .broadcasterName(rs.getString("broadcaster_name")).gameId(rs.getString("game_id")).type(itemType).build();
+                    itemMap.get(rs.getString("type")).add(item);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to get favorite items from Database");
+        }
+        return itemMap;
+    }
+    // Get favorite game ids for the given user. The returned map includes three entries like {"Video": ["1234", "5678", ...], "Stream": ["abcd", "efgh", ...], "Clip": ["4321", "5678", ...]}
+    public Map<String, List<String>> getFavoriteGameIds(Set<String> favoriteItemIds) throws MySQLException {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            throw new MySQLException("Failed to connect to Database");
+        }
+        Map<String, List<String>> itemMap = new HashMap<>();
+        for (ItemType type : ItemType.values()) {
+            itemMap.put(type.toString(), new ArrayList<>());
+        }
+        String sql = "SELECT game_id, type FROM items WHERE id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            for (String itemId : favoriteItemIds) {
+                statement.setString(1, itemId);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    itemMap.get(rs.getString("type")).add(rs.getString("game_id"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new MySQLException("Failed to get favorite game ids from Database");
+        }
+        return itemMap;
+    }
+}
+```
 
 #### user registeration and authentification
 ```
@@ -237,26 +406,129 @@ public class LoginServlet extends HttpServlet {
 ```
 
 #### Searching Algorithms: 
-  ##### 1. for all users, search by top games / search by game namae
+  ##### Implement Content-based Recommendation for Twitch Items
   ```
-  ...
+  public class ItemRecommender {
+    private static final int DEFAULT_GAME_LIMIT = 3;
+    private static final int DEFAULT_PER_GAME_RECOMMENDATION_LIMIT = 10;
+    private static final int DEFAULT_TOTAL_RECOMMENDATION_LIMIT = 20;
+
+    private List<Item> recommendByTopGames(ItemType type, List<Game> topGames) throws RecommendationException {
+        List<Item> recommendedItems = new ArrayList<>();
+        TwitchClient client = new TwitchClient();
+
+        outerloop:
+        for (Game game : topGames) {
+            List<Item> items;
+            try {
+                items = client.searchByType(game.getId(), type, DEFAULT_PER_GAME_RECOMMENDATION_LIMIT);
+            } catch (TwitchException e) {
+                throw new RecommendationException("Failed to get recommendation result");
+            }
+            for (Item item : items) {
+                if (recommendedItems.size() == DEFAULT_TOTAL_RECOMMENDATION_LIMIT) {
+                    break outerloop;
+                }
+                recommendedItems.add(item);
+            }
+        }
+        return recommendedItems;
+    }
+
+    // Return a list of Item objects for the given type. Types are one of [Stream, Video, Clip]. All items are related to the items previously favorited by the user. E.g., if a user favorited some videos about game "Just Chatting", then it will return some other videos about the same game.
+    private List<Item> recommendByFavoriteHistory(
+            Set<String> favoritedItemIds, List<String> favoriteGameIds, ItemType type) throws RecommendationException {
+        // Count the favorite game IDs from the database for the given user. E.g. if the favorited game ID list is ["1234", "2345", "2345", "3456"], the returned Map is {"1234": 1, "2345": 2, "3456": 1}
+        Map<String, Long> favoriteGameIdByCount = favoriteGameIds.parallelStream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+
+        // Sort the game Id by count. E.g. if the input is {"1234": 1, "2345": 2, "3456": 1}, the returned Map is {"2345": 2, "1234": 1, "3456": 1}
+        List<Map.Entry<String, Long>> sortedFavoriteGameIdListByCount = new ArrayList<>(
+                favoriteGameIdByCount.entrySet());
+        sortedFavoriteGameIdListByCount.sort((Map.Entry<String, Long> e1, Map.Entry<String, Long> e2) -> Long
+                .compare(e2.getValue(), e1.getValue()));
+
+        if (sortedFavoriteGameIdListByCount.size() > DEFAULT_GAME_LIMIT) {
+            sortedFavoriteGameIdListByCount = sortedFavoriteGameIdListByCount.subList(0, DEFAULT_GAME_LIMIT);
+        }
+
+        List<Item> recommendedItems = new ArrayList<>();
+        TwitchClient client = new TwitchClient();
+
+        // Search Twitch based on the favorite game IDs returned in the last step.
+        outerloop:
+        for (Map.Entry<String, Long> favoriteGame : sortedFavoriteGameIdListByCount) {
+            List<Item> items;
+            try {
+                items = client.searchByType(favoriteGame.getKey(), type, DEFAULT_PER_GAME_RECOMMENDATION_LIMIT);
+            } catch (TwitchException e) {
+                throw new RecommendationException("Failed to get recommendation result");
+            }
+
+            for (Item item : items) {
+                if (recommendedItems.size() == DEFAULT_TOTAL_RECOMMENDATION_LIMIT) {
+                    break outerloop;
+                }
+                if (!favoritedItemIds.contains(item.getId())) {
+                    recommendedItems.add(item);
+                }
+            }
+        }
+        return recommendedItems;
+    }
+
+    // Return a map of Item objects as the recommendation result. Keys of the may are [Stream, Video, Clip]. Each key is corresponding to a list of Items objects, each item object is a recommended item based on the previous favorite records by the user.
+    public Map<String, List<Item>> recommendItemsByUser(String userId) throws RecommendationException {
+        Map<String, List<Item>> recommendedItemMap = new HashMap<>();
+        Set<String> favoriteItemIds;
+        Map<String, List<String>> favoriteGameIds;
+        MySQLConnection connection = null;
+        try {
+            connection = new MySQLConnection();
+            favoriteItemIds = connection.getFavoriteItemIds(userId);
+            favoriteGameIds = connection.getFavoriteGameIds(favoriteItemIds);
+        } catch (MySQLException e) {
+            throw new RecommendationException("Failed to get user favorite history for recommendation");
+        } finally {
+            connection.close();
+        }
+
+        for (Map.Entry<String, List<String>> entry : favoriteGameIds.entrySet()) {
+            if (entry.getValue().size() == 0) {
+                TwitchClient client = new TwitchClient();
+                List<Game> topGames;
+                try {
+                    topGames = client.topGames(DEFAULT_GAME_LIMIT);
+                } catch (TwitchException e) {
+                    throw new RecommendationException("Failed to get game data for recommendation");
+                }
+                recommendedItemMap.put(entry.getKey(), recommendByTopGames(ItemType.valueOf(entry.getKey()), topGames));
+            } else {
+                recommendedItemMap.put(entry.getKey(), recommendByFavoriteHistory(favoriteItemIds, entry.getValue(), ItemType.valueOf(entry.getKey())));
+            }
+        }
+        return recommendedItemMap;
+    }
+
+    // Return a map of Item objects as the recommendation result. Keys of the may are [Stream, Video, Clip]. Each key is corresponding to a list of Items objects, each item object is a recommended item based on the top games currently on Twitch.
+    public Map<String, List<Item>> recommendItemsByDefault() throws RecommendationException {
+        Map<String, List<Item>> recommendedItemMap = new HashMap<>();
+        TwitchClient client = new TwitchClient();
+        List<Game> topGames;
+        try {
+            topGames = client.topGames(DEFAULT_GAME_LIMIT);
+        } catch (TwitchException e) {
+            throw new RecommendationException("Failed to get game data for recommendation");
+        }
+
+        for (ItemType type : ItemType.values()) {
+            recommendedItemMap.put(type.toString(), recommendByTopGames(type, topGames));
+        }
+        return recommendedItemMap;
+    }
   ```
-  
-  ##### 2. for registered users, search through favorite collections
-```
-..
-```
-
-#### Save, star and collect favorite items 
-
-```
-..
-```
-
-#### Content-based recommendation System
-  
-```
-```
+ 
 
 
 
