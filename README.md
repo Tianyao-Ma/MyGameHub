@@ -38,7 +38,7 @@
 ## 📐 Design Doc
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/78308927/129795256-9d09747a-8185-4a7f-b0c6-1a34bb102e1c.jpg" width=800>
+<img src="https://user-images.githubusercontent.com/78308927/130887360-e570d151-acb0-42f4-9051-3721bcbe103e.jpg" width=800>
 </p>
 
 ## :fire: Key Features
