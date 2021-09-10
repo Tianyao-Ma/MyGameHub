@@ -118,6 +118,87 @@ public class TwitchClient {
         return itemMap;
     }
 ```
+### Search Methods
+####
+```
+public Game searchGame(String gameName) throws TwitchException {
+        List<Game> gameList = getGameList(searchTwitch(buildGameURL(GAME_SEARCH_URL_TEMPLATE, gameName, 0)));
+        if (gameList.size() != 0) {
+            return gameList.get(0);
+        }
+        return null;
+    }
+
+    // Similar to getGameList, convert the json data returned from Twitch to a list of Item objects.
+    private List<Item> getItemList(String data) throws TwitchException {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return Arrays.asList(mapper.readValue(data, Item[].class));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new TwitchException("Failed to parse item data from Twitch API");
+        }
+    }
+
+    // Returns the top x streams based on game ID.
+    private List<Item> searchStreams(String gameId, int limit) throws TwitchException {
+        List<Item> streams = getItemList(searchTwitch(buildSearchURL(STREAM_SEARCH_URL_TEMPLATE, gameId, limit)));
+        for (Item item : streams) {
+            item.setType(ItemType.STREAM);
+            item.setUrl(TWITCH_BASE_URL + item.getBroadcasterName());
+        }
+        return streams;
+    }
+
+    // Returns the top x clips based on game ID.
+    private List<Item> searchClips(String gameId, int limit) throws TwitchException {
+        List<Item> clips = getItemList(searchTwitch(buildSearchURL(CLIP_SEARCH_URL_TEMPLATE, gameId, limit)));
+        for (Item item : clips) {
+            item.setType(ItemType.CLIP);
+        }
+        return clips;
+    }
+
+    // Returns the top x videos based on game ID.
+    private List<Item> searchVideos(String gameId, int limit) throws TwitchException {
+        List<Item> videos = getItemList(searchTwitch(buildSearchURL(VIDEO_SEARCH_URL_TEMPLATE, gameId, limit)));
+        for (Item item : videos) {
+            item.setType(ItemType.VIDEO);
+        }
+        return videos;
+    }
+
+    public List<Item> searchByType(String gameId, ItemType type, int limit) throws TwitchException {
+        List<Item> items = Collections.emptyList();
+
+        switch (type) {
+            case STREAM:
+                items = searchStreams(gameId, limit);
+                break;
+            case VIDEO:
+                items = searchVideos(gameId, limit);
+                break;
+            case CLIP:
+                items = searchClips(gameId, limit);
+                break;
+        }
+
+        // Update gameId for all items. GameId is used by recommendation function
+        for (Item item : items) {
+            item.setGameId(gameId);
+        }
+        return items;
+    }
+
+    public Map<String, List<Item>> searchItems(String gameId) throws TwitchException {
+        Map<String, List<Item>> itemMap = new HashMap<>();
+        for (ItemType type : ItemType.values()) {
+            itemMap.put(type.toString(), searchByType(gameId, type, DEFAULT_SEARCH_LIMIT));
+        }
+        return itemMap;
+    }
+    
+```
 ###  Set and Unset Favorite Items
 #### Support registered users to save and unsave favorite clips/videos/streams with SQL
 
