@@ -44,6 +44,7 @@
 
 - **RESTful API using Java servlets**.
 - **Retrieve real time data through Twitch API and store in MySQL** [[Twitch API]](#twitch-api)
+- **Display top games retrieved from Twitch API for all users**
 - **Support three search functionality: by top games, by game name, and through favorited collections**. [[Search Methods]](#search-methods)
 - **Registered user can save and collect favorite clips/streams/videos**. [[Favorite Feature]](#set-and-unset-favorite-items)
 - **Content-based reommendation system**. [[Recommendation System]](#content-based-recommendation)
