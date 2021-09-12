@@ -18,7 +18,10 @@
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/78308927/130557086-43903742-05e8-4fed-b054-deb8c05b8e63.gif)
+## :film_strip: Project Demo
+<p align="center">
+<img src="https://user-images.githubusercontent.com/78308927/130557086-43903742-05e8-4fed-b054-deb8c05b8e63.gif" width="800">
+</p>
 
 ## 🤖 Tech Stack
 
@@ -44,7 +47,7 @@
 
 - **RESTful API using Java servlets**.
 - **Retrieve real time data through Twitch API and store in MySQL** [[Twitch API]](#twitch-api)
-- **Display top games retrieved from Twitch API for all users**
+- **Display top games ranked by Twitch official website for all users**.
 - **Support three search functionality: by top games, by game name, and through favorited collections**. [[Search Methods]](#search-methods)
 - **Registered user can save and collect favorite clips/streams/videos**. [[Favorite Feature]](#set-and-unset-favorite-items)
 - **Content-based reommendation system**. [[Recommendation System]](#content-based-recommendation)
@@ -120,7 +123,7 @@ public class TwitchClient {
     }
 ```
 ### Search Methods
-####
+#### Search by game name, search by game type
 ```
 public Game searchGame(String gameName) throws TwitchException {
         List<Game> gameList = getGameList(searchTwitch(buildGameURL(GAME_SEARCH_URL_TEMPLATE, gameName, 0)));
