@@ -13,7 +13,8 @@
 
 ## 🎬 About the project
 <p align="justify"> 
-  Twitch is very popular. But there is so much contents out there. Sometimes, it can be overwhelming and distracting. If you are a occational gamer like me, and you prefer to save and archive your favorite clips/videos/streams than following a tons of channels and getting millions of notifications a day, then MyTwitchHub is for you! It is a web application allows users to browse, search Twitch games, and create their own favorite lists.
+  Twitch is very popular. But there is so much contents out there. Sometimes, it can be overwhelming and distracting. If you are a occational gamer like me, and you prefer to save and archive your favorite clips/videos/streams than following a tons of channels and getting millions of notifications a day, then MyTwitchHub is for you! It is a web application allows users to browse, search, and create their own favorite lists of Twitch content in three categories: streams, videos, and clips. For all users, we will reommend top hit games retrieved from Twitch, and for registered users, we will recommend games based on their favorite lists.
+  
 </p>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
