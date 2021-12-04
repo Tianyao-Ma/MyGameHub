@@ -13,7 +13,9 @@
 
 ## 🎬 About the project
 <p align="justify"> 
-Twitch is a leading streaming service specializes in broadcasting real-time gaming. Millions of people every month are streaming on and watching Twitch. One of the best thing about Twitch is that you can interat with others in real-time gaming sessions and be part of the community. However, as an occassional gamer, I found the amount of content and pop-out lives on Twitch homepage overwhelming and distracting. That's why I started this project, to build something minimal and much more personal. With data retrived using Twitch API, this minimal-looking web application allows all users to browse and search top game lists and specific Twitch content using keywords in three categories: streams, videos, and clips. For registered users, they will be able to create and save their favorite lists in each categories and get personalised recommendations. 
+Twitch is a leading streaming service specializes in broadcasting real-time gaming. Millions of people every month are streaming on and watching Twitch. One of the best thing about Twitch is that you can interat with others in real-time gaming sessions and be part of the community. However, if you are an occassional gamer like me, you may also find the amount of content and pop-out lives on Twitch homepage overwhelming and distracting. Can we filter the unnecessary content and make it more personal? 
+ 
+With data retrived using Twitch API, this minimal-looking web application allows all users to browse and search top game lists and specific Twitch content using keywords in three categories: streams, videos, and clips. For registered users, they will be able to create and save their favorite lists in each categories and get personalised recommendations. 
 </p>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
