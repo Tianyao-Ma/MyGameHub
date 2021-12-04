@@ -13,8 +13,7 @@
 
 ## 🎬 About the project
 <p align="justify"> 
-  Twitch is very popular. But there is so much contents out there. Sometimes, it can be overwhelming and distracting. If you are a occational gamer like me, and you prefer to save and archive your favorite clips/videos/streams than following a tons of channels and getting millions of notifications a day, then MyTwitchHub is for you! It is a web application allows users to browse, search, and create their own favorite lists of Twitch content in three categories: streams, videos, and clips. For all users, we will reommend top hit games retrieved from Twitch, and for registered users, we will recommend games based on their favorite lists.
-  
+Twitch is a leading streaming service specializes in broadcasting real-time gaming. Millions of people every month are streaming on and watching Twitch. One of the best thing about Twitch is that you can interat with others in real-time gaming sessions and be part of the community. However, as an occassional gamer, I found the amount of content and pop-out lives on Twitch homepage overwhelming and distracting. That's why I started this project, to build something minimal and much more personal. With data retrived using Twitch API, this minimal-looking web application allows all users to browse and search top game lists and specific Twitch content using keywords in three categories: streams, videos, and clips. For registered users, they will be able to create and save their favorite lists in each categories and get personalised recommendations. 
 </p>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
@@ -51,6 +50,8 @@
 - **Minimal, content-focused, and clutter-free frontEnd design**.
 
 ## :seedling: For Furture Improvement
+
+* Optimization on deleting and updating saved favorite lists.
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 ## :spiral_notepad: Sample Code
