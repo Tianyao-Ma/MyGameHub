@@ -53,7 +53,7 @@ With data retrived using Twitch API, this minimal-looking web application allows
 
 ## :seedling: For Furture Improvement
 
-* Optimization on deleting and updating saved favorite lists.
+* Optimization on favorite list deletion and update.
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 ## :spiral_notepad: Sample Code
