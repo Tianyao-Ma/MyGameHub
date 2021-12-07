@@ -1,4 +1,4 @@
-# MyTwitchHub
+# MyGameHub
 
 <p align="center">
 <img src="https://img.shields.io/badge/Backend-%20Java | JavaServlet%20-F6922B.svg">
